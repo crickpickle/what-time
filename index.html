@@ -13,25 +13,29 @@
       color: #084c61;
     }
     h1 {
+      
+      
       font-size: 2.5em;
       margin-bottom: 20px;
-      font-weight: 600;
+      font-weight: 700;
       color: #007ea7;
+      animation: fadeSlide 1s ease forwards;
+      opacity: 0;
+    
+    
+      text-shadow: 0 1px 2px rgba(0, 126, 167, 0.2), 0 0 6px rgba(0, 180, 216, 0.3);
     }
     label, input, select {
+      display: block;
+      margin: 12px auto;
       padding: 10px;
       width: 90%;
       max-width: 300px;
       border-radius: 4px;
-      border: 1px solid #ccc;
-      background-color: rgba(255,255,255,0.6);
-    }
-    input, select {
-      padding: 10px;
-      width: 90%;
-      max-width: 300px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+      border: 1px solid #007ea7;
+      background-color: rgba(0, 126, 167, 0.1);
+      color: #007ea7;
+      font-size: 1em;
     }
     button {
       padding: 10px 20px;
@@ -42,19 +46,23 @@
       border-radius: 25px;
       cursor: pointer;
       margin-top: 15px;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
     button:hover {
       background: linear-gradient(to right, #00b4d8, #007ea7);
+      transform: translateY(-2px);
     }
     .result {
       margin-top: 30px;
       font-size: 1.2em;
     }
     #map {
+      display: block;
       margin-top: 20px;
       max-width: 100%;
       height: auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
       .card {
       background-color: rgba(255, 255, 255, 0.75);
@@ -71,41 +79,51 @@
     .fade.visible {
       opacity: 1;
     }
+      @keyframes fadeSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
   <h1>What Time Should I Leave?</h1>
-  <div class="card fade visible" id="formCard">
+  <div class="card fade visible" id="formCard" style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px;">
+    <label for="origin">Starting Location:</label>
+    <input id="origin" placeholder="Enter your starting address" />
 
-  <label for="origin">Starting Location:</label>
-  <input id="origin" placeholder="Enter your starting address" />
+    <label for="destination">Destination:</label>
+    <input id="destination" placeholder="Enter your destination" />
 
-  <label for="destination">Destination:</label>
-  <input id="destination" placeholder="Enter your destination" />
+    <label for="arrival">Arrival Time:</label>
+    <input type="time" id="arrival" required />
 
-  <label for="arrival">Arrival Time:</label>
-  <input type="time" id="arrival" required />
+    <label for="buffer">Add Buffer (in minutes):</label>
+    <select id="buffer">
+      <option value="0">None</option>
+      <option value="5">5 min</option>
+      <option value="10" selected>10 min</option>
+      <option value="15">15 min</option>
+      <option value="20">20 min</option>
+      <option value="30">30 min</option>
+      <option value="60">60 min</option>
+    </select>
 
-  <label for="buffer">Add Buffer (in minutes):</label>
-  <select id="buffer">
-    <option value="0">None</option>
-    <option value="5">5 min</option>
-    <option value="10" selected>10 min</option>
-    <option value="15">15 min</option>
-    <option value="20">20 min</option>
-    <option value="30">30 min</option>
-    <option value="60">60 min</option>
-  </select>
-
-  <button onclick="calculateDeparture()">Calculate</button>
-
+    <button onclick="calculateDeparture()">Calculate</button>
   </div>
-  <div class="result fade" id="result"></div>
-  <div style="margin-top: 20px;">
-    <img id="map" alt="Route map" style="display: none; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" />
-    <div id="mapPlaceholder" style="background: rgba(255,255,255,0.6); border: 2px dashed #007ea7; border-radius: 10px; padding: 40px; font-size: 1em; color: #007ea7; max-width: 600px; margin: 0 auto;">
+  </div>
+  <div class="card fade visible" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; max-width: 600px; margin: 0 auto;">
+    <div class="result fade" id="result"></div>
+    <img id="map" alt="Route map" style="display: none; margin-top: 10px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); max-width: 100%; height: auto;" />
+    <div id="mapPlaceholder" style="background: rgba(211, 244, 255, 0.4); border: 2px dashed #007ea7; border-radius: 10px; padding: 40px; font-size: 1em; color: #007ea7; max-width: 100%; width: 100%;">
       A preview map will appear here after you calculate.
     </div>
+  </div>
   </div>
 
   <script>
