@@ -96,24 +96,17 @@
   <h1>What Time Should I Leave?</h1>
   <div class="card fade visible" id="formCard" style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 40px;">
     <label for="origin">Starting Location:</label>
-    <input id="origin" placeholder="Enter your starting address" />
+<input id="origin" placeholder="" />
 
     <label for="destination">Destination:</label>
-    <input id="destination" placeholder="Enter your destination" />
+<input id="destination" placeholder="" />
 
     <label for="arrival">Arrival Time:</label>
-    <input type="time" id="arrival" required />
+<input type="time" id="arrival" required />
 
     <label for="buffer">Add Buffer (in minutes):</label>
-    <select id="buffer">
-      <option value="0">None</option>
-      <option value="5">5 min</option>
-      <option value="10" selected>10 min</option>
-      <option value="15">15 min</option>
-      <option value="20">20 min</option>
-      <option value="30">30 min</option>
-      <option value="60">60 min</option>
-    </select>
+<select id="buffer">
+$1</select>
 
     <button onclick="calculateDeparture()">Calculate</button>
   </div>
