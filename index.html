@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>What Time Should I Leave?</title>
   <style>
     body {
@@ -45,22 +45,47 @@
 <body>
   <h1>What Time Should I Leave?</h1>
 
-  <label for="arrival">Arrival Time:</label>
-  <input type="time" id="arrival" required>
+  <label for="origin">Starting Location:</label>
+  <input id="origin" placeholder="Enter your starting address" />
 
-  <label for="travelTime">Estimated Travel Time (in minutes):</label>
-  <input type="number" id="travelTime" required>
+  <label for="destination">Destination:</label>
+  <input id="destination" placeholder="Enter your destination" />
+
+  <label for="arrival">Arrival Time:</label>
+  <input type="time" id="arrival" required />
 
   <button onclick="calculateDeparture()">Calculate</button>
 
   <div class="result" id="result"></div>
 
   <script>
-    function calculateDeparture() {
-      const arrivalTime = document.getElementById('arrival').value;
-      const travelMinutes = parseInt(document.getElementById('travelTime').value);
+    let originAutocomplete, destinationAutocomplete;
+    function initAutocomplete() {
+      originAutocomplete = new google.maps.places.Autocomplete(
+        document.getElementById('origin')
+      );
+      destinationAutocomplete = new google.maps.places.Autocomplete(
+        document.getElementById('destination')
+      );
+    }
 
-      if (!arrivalTime || isNaN(travelMinutes)) return;
+    function formatAMPM(date) {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      return hours + ':' + minutes + ' ' + ampm;
+    }
+
+    function calculateDeparture() {
+      const origin = document.getElementById('origin').value;
+      const destination = document.getElementById('destination').value;
+      const arrivalTime = document.getElementById('arrival').value;
+      const bufferMinutes = 10;
+
+      if (!origin || !destination || !arrivalTime) return;
 
       const [hours, minutes] = arrivalTime.split(':').map(Number);
       const arrivalDate = new Date();
@@ -68,13 +93,29 @@
       arrivalDate.setMinutes(minutes);
       arrivalDate.setSeconds(0);
 
-      const leaveTime = new Date(arrivalDate.getTime() - travelMinutes * 60000);
-      const leaveHours = leaveTime.getHours().toString().padStart(2, '0');
-      const leaveMinutes = leaveTime.getMinutes().toString().padStart(2, '0');
-
-      document.getElementById('result').textContent = 
-        `You should leave by ${leaveHours}:${leaveMinutes}`;
+      const service = new google.maps.DistanceMatrixService();
+      service.getDistanceMatrix({
+        origins: [origin],
+        destinations: [destination],
+        travelMode: 'DRIVING',
+      }, function(response, status) {
+        if (status === 'OK') {
+          const duration = response.rows[0].elements[0].duration.value; // in seconds
+          const totalTravelTime = duration + (bufferMinutes * 60);
+          const leaveTime = new Date(arrivalDate.getTime() - totalTravelTime * 1000);
+          const formattedLeave = formatAMPM(leaveTime);
+          const formattedArrival = formatAMPM(arrivalDate);
+          document.getElementById('result').textContent =
+            `Leave by ${formattedLeave} to arrive by ${formattedArrival}, with a ${bufferMinutes}-minute buffer.`;
+        } else {
+          document.getElementById('result').textContent = 'Error calculating travel time.';
+        }
+      });
     }
   </script>
+
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD3RVIQK1b5i7cu4LgvBcGVOLte1o3rtvE&libraries=places&callback=initAutocomplete"
+    async defer></script>
 </body>
 </html>
