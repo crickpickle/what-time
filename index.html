@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>$1  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">$1<meta charset="UTF-8" />
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"><meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>What Time Should I Leave?</title>
   <style>
@@ -80,7 +81,12 @@
   <button onclick="calculateDeparture()">Calculate</button>
 
   <div class="result" id="result"></div>
-  <img id="map" alt="Route map" />
+  <div style="margin-top: 20px;">
+    <img id="map" alt="Route map" style="display: none; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" />
+    <div id="mapPlaceholder" style="background: rgba(255,255,255,0.6); border: 2px dashed #007ea7; border-radius: 10px; padding: 40px; font-size: 1em; color: #007ea7; max-width: 600px; margin: 0 auto;">
+      A preview map will appear here after you calculate.
+    </div>
+  </div>
 
   <script>
     let originAutocomplete, destinationAutocomplete;
@@ -112,12 +118,16 @@
       if (!origin || !destination) {
         document.getElementById('result').textContent = 'Please enter both starting location and destination.';
         document.getElementById('map').src = '';
+        document.getElementById('map').style.display = 'none';
+        document.getElementById('mapPlaceholder').style.display = 'block';
         return;
       }
 
       if (!arrivalTime || isNaN(bufferMinutes)) {
         document.getElementById('result').textContent = 'Please provide a valid arrival time and buffer.';
         document.getElementById('map').src = '';
+        document.getElementById('map').style.display = 'none';
+        document.getElementById('mapPlaceholder').style.display = 'block';
         return;
       }
 
@@ -144,9 +154,13 @@
 
           const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?size=600x300&path=enc:&markers=label:S|${encodeURIComponent(origin)}&markers=label:D|${encodeURIComponent(destination)}&key=AIzaSyD3RVIQK1b5i7cu4LgvBcGVOLte1o3rtvE`;
           document.getElementById('map').src = staticMapUrl;
+          document.getElementById('map').style.display = 'block';
+          document.getElementById('mapPlaceholder').style.display = 'none';
         } else {
           document.getElementById('result').textContent = 'Sorry, we couldn\'t find a route between those locations. Please check your inputs.';
           document.getElementById('map').src = '';
+        document.getElementById('map').style.display = 'none';
+        document.getElementById('mapPlaceholder').style.display = 'block';
         }
       });
     }
