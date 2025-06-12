@@ -19,9 +19,12 @@
       color: #007ea7;
     }
     label, input, select {
-      display: block;
-      margin: 10px auto;
-      font-size: 1em;
+      padding: 10px;
+      width: 90%;
+      max-width: 300px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: rgba(255,255,255,0.6);
     }
     input, select {
       padding: 10px;
@@ -53,10 +56,26 @@
       max-width: 100%;
       height: auto;
     }
+      .card {
+      background-color: rgba(255, 255, 255, 0.75);
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 600px;
+      margin: 0 auto 40px auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .fade {
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+    }
+    .fade.visible {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
   <h1>What Time Should I Leave?</h1>
+  <div class="card fade visible" id="formCard">
 
   <label for="origin">Starting Location:</label>
   <input id="origin" placeholder="Enter your starting address" />
@@ -80,7 +99,8 @@
 
   <button onclick="calculateDeparture()">Calculate</button>
 
-  <div class="result" id="result"></div>
+  </div>
+  <div class="result fade" id="result"></div>
   <div style="margin-top: 20px;">
     <img id="map" alt="Route map" style="display: none; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" />
     <div id="mapPlaceholder" style="background: rgba(255,255,255,0.6); border: 2px dashed #007ea7; border-radius: 10px; padding: 40px; font-size: 1em; color: #007ea7; max-width: 600px; margin: 0 auto;">
@@ -116,7 +136,8 @@
       const bufferMinutes = parseInt(document.getElementById('buffer').value);
 
       if (!origin || !destination) {
-        document.getElementById('result').textContent = 'Please enter both starting location and destination.';
+        document.getElementById('result').classList.add('visible');
+          document.getElementById('result').textContent = 'Please enter both starting location and destination.';
         document.getElementById('map').src = '';
         document.getElementById('map').style.display = 'none';
         document.getElementById('mapPlaceholder').style.display = 'block';
@@ -124,7 +145,8 @@
       }
 
       if (!arrivalTime || isNaN(bufferMinutes)) {
-        document.getElementById('result').textContent = 'Please provide a valid arrival time and buffer.';
+        document.getElementById('result').classList.add('visible');
+          document.getElementById('result').textContent = 'Please provide a valid arrival time and buffer.';
         document.getElementById('map').src = '';
         document.getElementById('map').style.display = 'none';
         document.getElementById('mapPlaceholder').style.display = 'block';
@@ -149,6 +171,7 @@
           const leaveTime = new Date(arrivalDate.getTime() - totalTravelTime * 1000);
           const formattedLeave = formatAMPM(leaveTime);
           const formattedArrival = formatAMPM(arrivalDate);
+          document.getElementById('result').classList.add('visible');
           document.getElementById('result').textContent =
             `Leave by ${formattedLeave} to arrive by ${formattedArrival}, with a ${bufferMinutes}-minute buffer.`;
 
@@ -157,6 +180,7 @@
           document.getElementById('map').style.display = 'block';
           document.getElementById('mapPlaceholder').style.display = 'none';
         } else {
+          document.getElementById('result').classList.add('visible');
           document.getElementById('result').textContent = 'Sorry, we couldn\'t find a route between those locations. Please check your inputs.';
           document.getElementById('map').src = '';
         document.getElementById('map').style.display = 'none';
