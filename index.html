@@ -27,7 +27,7 @@
     }
     label, input, select {
       display: block;
-      margin: 12px auto;
+      margin: 12px 0;
       padding: 10px;
       width: 90%;
       max-width: 300px;
@@ -36,6 +36,7 @@
       background-color: rgba(0, 126, 167, 0.1);
       color: #007ea7;
       font-size: 1em;
+      text-align: left;
     }
     button {
       padding: 10px 20px;
@@ -93,7 +94,7 @@
 </head>
 <body>
   <h1>What Time Should I Leave?</h1>
-  <div class="card fade visible" id="formCard" style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 40px;">
+  <div class="card fade visible" id="formCard" style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px; margin-bottom: 40px;">
     <label for="origin">Starting Location:</label>
     <input id="origin" placeholder="Enter your starting address" />
 
