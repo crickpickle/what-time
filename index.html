@@ -118,7 +118,7 @@
         return;
       }
 
-      try { = arrivalTime.split(':').map(Number);
+      const [hours, minutes] = arrivalTime.split(':').map(Number);
       const arrivalDate = new Date();
       arrivalDate.setHours(hours);
       arrivalDate.setMinutes(minutes);
