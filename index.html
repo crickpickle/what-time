@@ -44,6 +44,11 @@
       margin-top: 30px;
       font-size: 1.2em;
     }
+    #map {
+      margin-top: 20px;
+      max-width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 <body>
@@ -72,6 +77,7 @@
   <button onclick="calculateDeparture()">Calculate</button>
 
   <div class="result" id="result"></div>
+  <img id="map" alt="Route map" />
 
   <script>
     let originAutocomplete, destinationAutocomplete;
@@ -95,14 +101,24 @@
     }
 
     function calculateDeparture() {
-      const origin = document.getElementById('origin').value;
-      const destination = document.getElementById('destination').value;
+      const origin = document.getElementById('origin').value.trim();
+      const destination = document.getElementById('destination').value.trim();
       const arrivalTime = document.getElementById('arrival').value;
       const bufferMinutes = parseInt(document.getElementById('buffer').value);
 
-      if (!origin || !destination || !arrivalTime || isNaN(bufferMinutes)) return;
+      if (!origin || !destination) {
+        document.getElementById('result').textContent = 'Please enter both starting location and destination.';
+        document.getElementById('map').src = '';
+        return;
+      }
 
-      const [hours, minutes] = arrivalTime.split(':').map(Number);
+      if (!arrivalTime || isNaN(bufferMinutes)) {
+        document.getElementById('result').textContent = 'Please provide a valid arrival time and buffer.';
+        document.getElementById('map').src = '';
+        return;
+      }
+
+      try { = arrivalTime.split(':').map(Number);
       const arrivalDate = new Date();
       arrivalDate.setHours(hours);
       arrivalDate.setMinutes(minutes);
@@ -114,7 +130,7 @@
         destinations: [destination],
         travelMode: 'DRIVING',
       }, function(response, status) {
-        if (status === 'OK') {
+        if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
           const duration = response.rows[0].elements[0].duration.value; // in seconds
           const totalTravelTime = duration + (bufferMinutes * 60);
           const leaveTime = new Date(arrivalDate.getTime() - totalTravelTime * 1000);
@@ -122,8 +138,12 @@
           const formattedArrival = formatAMPM(arrivalDate);
           document.getElementById('result').textContent =
             `Leave by ${formattedLeave} to arrive by ${formattedArrival}, with a ${bufferMinutes}-minute buffer.`;
+
+          const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?size=600x300&path=enc:&markers=label:S|${encodeURIComponent(origin)}&markers=label:D|${encodeURIComponent(destination)}&key=AIzaSyD3RVIQK1b5i7cu4LgvBcGVOLte1o3rtvE`;
+          document.getElementById('map').src = staticMapUrl;
         } else {
-          document.getElementById('result').textContent = 'Error calculating travel time.';
+          document.getElementById('result').textContent = 'Sorry, we couldn\'t find a route between those locations. Please check your inputs.';
+          document.getElementById('map').src = '';
         }
       });
     }
